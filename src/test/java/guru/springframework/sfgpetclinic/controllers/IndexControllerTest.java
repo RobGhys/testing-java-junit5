@@ -7,26 +7,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IndexControllerTest {
 
-    IndexController controller;
+    private IndexController indexController;
 
     @BeforeEach
     void setUp() {
-        controller = new IndexController();
+        indexController = new IndexController();
     }
 
     @Test
     void index() {
-        assertEquals("index", controller.index());
-        assertEquals("index", controller.index(), "Wrong View Returned");
-
-        assertEquals("index", controller.index(), () -> "Another Expensive Message " +
-                "Make me only if you have to");
+        assertEquals("index", indexController.index());
+        assertNotEquals("indexxxxx", indexController.index(), "Wrong view returned");
     }
 
     @Test
     void oupsHandler() {
-        assertTrue("notimplemented".equals(controller.oupsHandler()), () -> "This is some expensive " +
-                "Message to build" +
-                "for my test");
+        assertTrue("notimplemented".equals(indexController.oupsHandler()),() -> "This is" + " an Expensive Msg!" + " Only evaluated if the test fails");
     }
 }
