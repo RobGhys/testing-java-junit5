@@ -75,7 +75,7 @@ class SpecialitySDJpaServiceTest {
         // Verify that the method was called 1x
         //verify(specialtyRepository).findById(1l);
         //then(specialtyRepository).should().findById(anyLong());
-        then(specialtyRepository).should(times(1)).findById(anyLong());
+        then(specialtyRepository).should(timeout(100).times(1)).findById(anyLong());
         then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
