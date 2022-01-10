@@ -13,8 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -168,5 +167,59 @@ class SpecialitySDJpaServiceTest {
 
         // Then
         then(specialtyRepository).should().delete(any());
+    }
+
+    /**************************
+     *       Exceptions       *
+     *************************/
+    @Test
+    void testThrowException() {
+
+        doThrow(new RuntimeException("This is an exception!")).when(specialtyRepository).delete(any());
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        verify(specialtyRepository).delete(any());
+    }
+
+    @Test
+    void findByIdThrowsTest() {
+        // Given
+        given(specialtyRepository.findById(1l)).willThrow(new RuntimeException("Exception!"));
+
+        // When
+        assertThrows(RuntimeException.class, () -> service.findById(1l));
+
+        // Then
+        then(specialtyRepository).should().findById(1l);
+    }
+
+    @Test
+    void deleteBDDTest() {
+        willThrow(new RuntimeException("Exception!")).given(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        then(specialtyRepository).should().delete(any());
+    }
+
+    @Test
+    void saveLambdaTest() {
+        // Given
+        final String MATCH_ME = "MATCH_ME";
+        Speciality specialty = new Speciality();
+        specialty.setDescription(MATCH_ME);
+
+        Speciality savedSpecialty = new Speciality();
+        savedSpecialty.setId(1l);
+
+        // As long as the expression in argThat() returns true, the given() will return the savedSpecialty instance
+        given(specialtyRepository.save(argThat(argument -> argument.getDescription().equals(MATCH_ME))))
+                .willReturn(savedSpecialty);
+
+        // When
+        Speciality returnedSpecialty = service.save(specialty);
+
+        // Then
+        assertThat(returnedSpecialty.getId()).isEqualTo(1l);
     }
 }
