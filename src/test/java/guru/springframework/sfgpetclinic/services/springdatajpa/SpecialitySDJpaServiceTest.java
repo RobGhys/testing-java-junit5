@@ -161,6 +161,12 @@ class SpecialitySDJpaServiceTest {
     @DisplayName("Test delete")
     @Test
     void testDelete() {
+        // Given - none
+
+        // When
         service.delete(new Speciality());
+
+        // Then
+        then(specialtyRepository).should().delete(any());
     }
 }
